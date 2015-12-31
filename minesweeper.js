@@ -77,8 +77,13 @@ function MineField() {
   };
 
   this.renderField = function renderField() {
-    self.field.innerHTML='';
+    console.info(self.downs);
+    var minefield = document.getElementById('minefield');
+    if (minefield) {
+      self.field.removeChild(minefield); 
+    }
     var table = document.createElement('table');
+    table.id="minefield";
     for (var row = 0; row < self.rows; ++ row) {
       var tr = document.createElement('tr');
       for (var col = 0; col < self.cols; ++ col ) {
@@ -110,12 +115,12 @@ function MineField() {
     switch(cell.state) {
       case 'up':
         self.flags ++;
-        self.downs --;
+        //self.downs --;
         cell.state = 'flag';
         break;
       case 'flag':
         self.flags --;
-        self.downs ++;
+        //self.downs ++;
         cell.state = 'question';
         break;
       case 'question':
@@ -171,6 +176,10 @@ function MineField() {
   };
 
   this.checkFlags = function checkFlags() {
+    if (self.flags === 0) {
+      return true;
+    }
+
     var flags = 0
     for (var row = 0; row < self.rows; row ++) {
       for (var col = 0; col < self.cols; col ++) {
@@ -214,7 +223,7 @@ function Game(level, board, result) {
   result.innerHTML = '';
 
   var checkWin = function checkWin() {
-    if (minefield.downs === 0 && minefield.checkFlags) {
+    if (minefield.downs === 0 && minefield.checkFlags()) {
       alert('You Win');
       result.innerHTML = '<span style="color: green">You Win!</span>'
       gameover = true;
@@ -254,7 +263,7 @@ function Game(level, board, result) {
       var col = cell.col;
       console.debug(event, row, col);
 
-      if (row && col) {
+      if (row !== undefined && col !== undefined) {
         minefield.changeState(row, col);
         minefield.renderField();
       }
