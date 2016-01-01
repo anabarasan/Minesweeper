@@ -219,8 +219,10 @@ function Game(level, board, flag, timer, smile, frown) {
   minefield.create(board, lines, lines, mines);
   smile.style.display = 'block';
   frown.style.display = 'none';
-  flag.innerHTML = formatCounter();
-  timer.innerHTML = formatCounter();
+  displayCounter(flag);
+  displayCounter(timer);
+  //flag.innerHTML = formatCounter();
+  //timer.innerHTML = formatCounter();
   this.timer = undefined;
   this.time = 0;
 
@@ -273,7 +275,7 @@ function Game(level, board, flag, timer, smile, frown) {
       if (row !== undefined && col !== undefined) {
         minefield.changeState(row, col);
         minefield.renderField();
-		flag.innerHTML = formatCounter(minefield.flags);
+        displayCounter(flag, minefield.flags);
       }
     }
   };
@@ -281,19 +283,39 @@ function Game(level, board, flag, timer, smile, frown) {
   board.addEventListener('click', onLeftClick, false);
   board.addEventListener('contextmenu', onRightClick, false);
   
-  function formatCounter(count) {
+  function formatter(element, count) {
+    var map = {
+      0: 'zero',
+      1: 'one',
+      2: 'two',
+      3: 'three',
+      4: 'four',
+      5: 'five',
+      6: 'six',
+      7: 'seven',
+      8: 'eight',
+      9: 'nine'
+    }
+    var digits = element.getElementsByClassName('digits')[0].getElementsByTagName('div');
+    digits[0].className = map[count[0]];
+    digits[1].className = map[count[1]];
+    digits[2].className = map[count[2]];
+  }
+  
+  function displayCounter(element, count) {
 	  var strCount = count ? String(count) : '';
 	  strCount = strCount.length > 3 ? '999' : strCount;
 	  var prefix = '000'.substr(0, 3 - strCount.length);
-	  return prefix + strCount;
+	  count = prefix + strCount;
+    formatter(element, count)
   }
-
+  
   function handleTimer() {
     self.time ++;
     if (self.time > 999) {
       self.time = 999;
     }
-    timer.innerHTML = formatCounter(self.time);
+    displayCounter(timer, self.time);
   }
 }
 
@@ -306,6 +328,7 @@ function newGame() {
   var timer = document.getElementById('timer');
   level = level.options[level.selectedIndex].value;
   game = new Game(level, board, flag, timer, smile, frown);
+  clearInterval(game.timer);
 }
 
 document.onreadystatechange = function () {
