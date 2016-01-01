@@ -1,0 +1,48 @@
+td{
+	width: 30px;
+  height: 30px;
+  border: 1px dotted;
+}
+
+#minesweeper{
+	text-align: center;
+}
+
+#board, #timer, #smiley, #flag_count{
+	display: inline-block;
+}
+
+#menu{
+	margin-bottom: 10px;
+}
+
+#result{
+	margin-bottom: 10px;
+  height: 20px;
+  display:none;
+}
+
+#info_display {
+  clear:both;
+  text-align:center; 
+}
+
+.up{
+	background-color: silver;
+}
+
+.down{
+	background-color: white;
+}
+
+.flag{
+	background-color: pink;
+}
+
+.question{
+	background-color: black;
+}
+
+.mine{
+	background-color: red;
+}

@@ -115,12 +115,10 @@ function MineField() {
     switch(cell.state) {
       case 'up':
         self.flags ++;
-        //self.downs --;
         cell.state = 'flag';
         break;
       case 'flag':
         self.flags --;
-        //self.downs ++;
         cell.state = 'question';
         break;
       case 'question':
@@ -205,7 +203,7 @@ function MineField() {
   }
 }
 
-function Game(level, board, result) {
+function Game(level, board, flag) {
   var DIFFICULTY = {
     'Beginner': { 'lines' : 7, 'mines': 5 },
     'Easy': { 'lines' : 9, 'mines': 10 },
@@ -220,14 +218,13 @@ function Game(level, board, result) {
   var minefield = new MineField();
   minefield.create(board, lines, lines, mines);
 
-  result.innerHTML = '';
+  flag.innerHTML = formatFlagCount();
 
   var checkWin = function checkWin() {
     if (minefield.downs === 0 && minefield.checkFlags()) {
-      alert('You Win');
-      result.innerHTML = '<span style="color: green">You Win!</span>'
       gameover = true;
       minefield.showMines();
+	  alert('You Win');
     }
   }
 
@@ -243,8 +240,8 @@ function Game(level, board, result) {
           console.info('Game Over');
           gameover = true;
           minefield.showMines();
-          alert('Game Over');
           result.innerHTML = '<span style="color: red">You Lose!</span>'
+		  alert('Game Over');
           return;
         } else {
           minefield.uncover(row, col);
@@ -266,20 +263,28 @@ function Game(level, board, result) {
       if (row !== undefined && col !== undefined) {
         minefield.changeState(row, col);
         minefield.renderField();
+		flag.innerHTML = formatFlagCount(minefield.flags);
       }
     }
   };
 
   board.addEventListener('click', onLeftClick, false);
   board.addEventListener('contextmenu', onRightClick, false);
+  
+  function formatFlagCount(flagCount) {
+	  var strFlgCnt = flagCount ? String(flagCount) : '';
+	  strFlgCnt = strFlgCnt.length > 3 ? '999' : strFlgCnt;
+	  var prefix = '000'.substr(0, 3 - strFlgCnt.length);
+	  return prefix + strFlgCnt;
+  }
 }
 
 function newGame() {
   var level = document.getElementById('level');
   var board = document.getElementById('board');
-  var result = document.getElementById('result');
+  var flag = document.getElementById('flag_count');
   level = level.options[level.selectedIndex].value;
-  game = new Game(level, board, result);
+  game = new Game(level, board, flag);
 }
 
 document.onreadystatechange = function () {
