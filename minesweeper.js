@@ -80,7 +80,7 @@ function MineField() {
     console.info(self.downs);
     var minefield = document.getElementById('minefield');
     if (minefield) {
-      self.field.removeChild(minefield); 
+      self.field.removeChild(minefield);
     }
     var table = document.createElement('table');
     table.id="minefield";
@@ -282,7 +282,7 @@ function Game(level, board, flag, timer, smile, frown) {
 
   board.addEventListener('click', onLeftClick, false);
   board.addEventListener('contextmenu', onRightClick, false);
-  
+
   function formatter(element, count) {
     var map = {
       0: 'zero',
@@ -301,7 +301,7 @@ function Game(level, board, flag, timer, smile, frown) {
     digits[1].className = map[count[1]];
     digits[2].className = map[count[2]];
   }
-  
+
   function displayCounter(element, count) {
 	  var strCount = count ? String(count) : '';
 	  strCount = strCount.length > 3 ? '999' : strCount;
@@ -309,7 +309,7 @@ function Game(level, board, flag, timer, smile, frown) {
 	  count = prefix + strCount;
     formatter(element, count)
   }
-  
+
   function handleTimer() {
     self.time ++;
     if (self.time > 999) {
