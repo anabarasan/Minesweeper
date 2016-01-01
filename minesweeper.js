@@ -203,7 +203,7 @@ function MineField() {
   }
 }
 
-function Game(level, board, flag) {
+function Game(level, board, flag, timer, smile, frown) {
   var DIFFICULTY = {
     'Beginner': { 'lines' : 7, 'mines': 5 },
     'Easy': { 'lines' : 9, 'mines': 10 },
@@ -217,8 +217,11 @@ function Game(level, board, flag) {
   var mines = DIFFICULTY[level].mines;
   var minefield = new MineField();
   minefield.create(board, lines, lines, mines);
-
-  flag.innerHTML = formatFlagCount();
+  smile.style.display = 'block';
+  frown.style.display = 'none';
+  flag.innerHTML = formatCounter();
+  timer.innerHTML = formatCounter();
+  this.timer = 0;
 
   var checkWin = function checkWin() {
     if (minefield.downs === 0 && minefield.checkFlags()) {
@@ -240,7 +243,8 @@ function Game(level, board, flag) {
           console.info('Game Over');
           gameover = true;
           minefield.showMines();
-          result.innerHTML = '<span style="color: red">You Lose!</span>'
+		  smile.style.display = 'none';
+		  frown.style.display = 'block';
 		  alert('Game Over');
           return;
         } else {
@@ -263,7 +267,7 @@ function Game(level, board, flag) {
       if (row !== undefined && col !== undefined) {
         minefield.changeState(row, col);
         minefield.renderField();
-		flag.innerHTML = formatFlagCount(minefield.flags);
+		flag.innerHTML = formatCounter(minefield.flags);
       }
     }
   };
@@ -271,11 +275,15 @@ function Game(level, board, flag) {
   board.addEventListener('click', onLeftClick, false);
   board.addEventListener('contextmenu', onRightClick, false);
   
-  function formatFlagCount(flagCount) {
-	  var strFlgCnt = flagCount ? String(flagCount) : '';
-	  strFlgCnt = strFlgCnt.length > 3 ? '999' : strFlgCnt;
-	  var prefix = '000'.substr(0, 3 - strFlgCnt.length);
-	  return prefix + strFlgCnt;
+  function formatCounter(count) {
+	  var strCount = count ? String(count) : '';
+	  strCount = strCount.length > 3 ? '999' : strCount;
+	  var prefix = '000'.substr(0, 3 - strCount.length);
+	  return prefix + strCount;
+  }
+
+  function startTimer() {
+	
   }
 }
 
@@ -283,8 +291,11 @@ function newGame() {
   var level = document.getElementById('level');
   var board = document.getElementById('board');
   var flag = document.getElementById('flag_count');
+  var smile = document.getElementsByClassName('smile')[0];
+  var frown = document.getElementsByClassName('frown')[0];
+  var timer = document.getElementById('timer');
   level = level.options[level.selectedIndex].value;
-  game = new Game(level, board, flag);
+  game = new Game(level, board, flag, timer, smile, frown);
 }
 
 document.onreadystatechange = function () {
