@@ -221,18 +221,23 @@ function Game(level, board, flag, timer, smile, frown) {
   frown.style.display = 'none';
   flag.innerHTML = formatCounter();
   timer.innerHTML = formatCounter();
-  this.timer = 0;
+  this.timer = undefined;
+  this.time = 0;
 
   var checkWin = function checkWin() {
     if (minefield.downs === 0 && minefield.checkFlags()) {
       gameover = true;
       minefield.showMines();
-	  alert('You Win');
+      clearInterval(self.timer);
+	    alert('You Win');
     }
   }
 
   var onLeftClick = function onLeftClick(event) {
     if (!gameover) {
+      if(!self.timer){
+        self.timer = setInterval(handleTimer, 1000);
+      }
       var cell =  event.srcElement;
       var row = cell.row;
       var col = cell.col;
@@ -242,10 +247,11 @@ function Game(level, board, flag, timer, smile, frown) {
         if (minefield.isMine(row, col)) {
           console.info('Game Over');
           gameover = true;
+          clearInterval(self.timer);
           minefield.showMines();
-		  smile.style.display = 'none';
-		  frown.style.display = 'block';
-		  alert('Game Over');
+          smile.style.display = 'none';
+          frown.style.display = 'block';
+          alert('Game Over');
           return;
         } else {
           minefield.uncover(row, col);
@@ -282,8 +288,12 @@ function Game(level, board, flag, timer, smile, frown) {
 	  return prefix + strCount;
   }
 
-  function startTimer() {
-	
+  function handleTimer() {
+    self.time ++;
+    if (self.time > 999) {
+      self.time = 999;
+    }
+    timer.innerHTML = formatCounter(self.time);
   }
 }
 
