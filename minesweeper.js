@@ -22,16 +22,16 @@ function MineField() {
 
   this.createCells = function createCells() {
     self.cells = [];
-    for (var row = 0; row < self.rows; row ++) {
+    for (var row = 0; row < self.rows; row++) {
       self.cells[row] = [];
-      for (var col = 0; col < self.cols; col ++) {
+      for (var col = 0; col < self.cols; col++) {
         self.cells[row][col] = new Cell();
       }
     }
   };
 
   this.addMines = function addMines() {
-    for (var mine = 0; mine < self.mines; mine ++) {
+    for (var mine = 0; mine < self.mines; mine++) {
       self.buryMine();
     }
   };
@@ -40,7 +40,7 @@ function MineField() {
     var row, col;
     do {
       row = Math.floor(Math.random() * self.rows);
-      col = Math.floor( Math.random() * self.cols);
+      col = Math.floor(Math.random() * self.cols);
     } while (self.isMine(row, col));
     self.cells[row][col].value = 'm';
     console.debug('Buried mine at co-ordinates (' + row + ', ' + col + ')');
@@ -49,27 +49,30 @@ function MineField() {
 
   this.addClues = function addClues(row, col) {
     console.debug('Bomb set @ (' + row + ', ' + col + ')');
-    console.debug('row', Math.max(row - 1, 0), Math.min(row + 1, self.rows - 1));
-    console.debug('col', Math.max(col - 1, 0), Math.min(col + 1, self.cols - 1));
+    // console.debug('row', Math.max(row - 1, 0), Math.min(row + 1, self.rows -
+    //   1));
+    // console.debug('col', Math.max(col - 1, 0), Math.min(col + 1, self.cols -
+    //   1));
     for (var r = Math.max(row - 1, 0); r <= Math.min(row + 1, self.rows - 1); r++) {
       for (var c = Math.max(col - 1, 0); c <= Math.min(col + 1, self.cols - 1); c++) {
         console.debug('setting Clue @ row : ' + r + ', col : ' + c);
-        if (! self.isMine(r, c)) {
-          self.cells[r][c].value ++;
-          console.debug('incrementing (' + r + ', ' + c + ') to ' + self.cells[r][c].value);
+        if (!self.isMine(r, c)) {
+          self.cells[r][c].value++;
+          // console.debug('incrementing (' + r + ', ' + c + ') to ' + self
+          //                                               .cells[r][c].value);
         }
       }
     }
   };
 
   this.isMine = function isMine(row, col) {
-  try {
-    return self.cells[row][col].value === 'm';
-  } catch (err) {
-    console.error(err.message);
-    console.error(row, col);
-    throw err.message;
-  }
+    try {
+      return self.cells[row][col].value === 'm';
+    } catch (err) {
+      console.error(err.message);
+      console.error(row, col);
+      throw err.message;
+    }
   };
 
   this.isEmpty = function isEmpty(row, col) {
@@ -77,16 +80,16 @@ function MineField() {
   };
 
   this.renderField = function renderField() {
-    console.info(self.downs);
+    // console.info(self.downs);
     var minefield = document.getElementById('minefield');
     if (minefield) {
       self.field.removeChild(minefield);
     }
     var table = document.createElement('table');
-    table.id="minefield";
-    for (var row = 0; row < self.rows; ++ row) {
+    table.id = "minefield";
+    for (var row = 0; row < self.rows; ++row) {
       var tr = document.createElement('tr');
-      for (var col = 0; col < self.cols; ++ col ) {
+      for (var col = 0; col < self.cols; ++col) {
         tr.appendChild(this.renderCell(row, col));
       }
       table.appendChild(tr);
@@ -101,7 +104,8 @@ function MineField() {
     cell.row = row;
     cell.col = col;
     if (self.cells[row][col].state === 'down') {
-      cell.innerText = self.cells[row][col].value === 0 ? '' : self.cells[row][col].value;
+      cell.innerText = self.cells[row][col].value === 0 ? '' : self.cells[row]
+        [col].value;
     }
     return cell;
   };
@@ -112,13 +116,13 @@ function MineField() {
       return;
     }
 
-    switch(cell.state) {
+    switch (cell.state) {
       case 'up':
-        self.flags ++;
+        self.flags++;
         cell.state = 'flag';
         break;
       case 'flag':
-        self.flags --;
+        self.flags--;
         cell.state = 'question';
         break;
       case 'question':
@@ -135,9 +139,9 @@ function MineField() {
       return;
     }
 
-    if (!self.isMine(row, col)){
+    if (!self.isMine(row, col)) {
       self.cells[row][col].state = 'down';
-      self.downs --;
+      self.downs--;
       if (self.isEmpty(row, col)) {
         self.uncoverNeighbours(row, col);
       }
@@ -179,11 +183,11 @@ function MineField() {
     }
 
     var flags = 0
-    for (var row = 0; row < self.rows; row ++) {
-      for (var col = 0; col < self.cols; col ++) {
+    for (var row = 0; row < self.rows; row++) {
+      for (var col = 0; col < self.cols; col++) {
         var cell = self.cells[row][col];
         if (cell.state === 'flag' && cell.value === 'm') {
-          flags ++
+          flags++
         }
       }
     }
@@ -191,8 +195,8 @@ function MineField() {
   };
 
   this.showMines = function showMines() {
-    for (var row = 0; row < self.rows; row ++) {
-      for (var col = 0; col < self.cols; col ++) {
+    for (var row = 0; row < self.rows; row++) {
+      for (var col = 0; col < self.cols; col++) {
         var cell = self.cells[row][col];
         if (cell.state !== 'flag' && cell.value === 'm') {
           cell.state = 'mine';
@@ -205,10 +209,22 @@ function MineField() {
 
 function Game(level, board, flag, timer, smile, frown) {
   var DIFFICULTY = {
-    'Beginner': { 'lines' : 7, 'mines': 5 },
-    'Easy': { 'lines' : 9, 'mines': 10 },
-    'Intermediate': { 'lines' : 12, 'mines': 24 },
-    'Advanced': { 'lines' : 16, 'mines': 60 },
+    'Beginner': {
+      'lines': 7,
+      'mines': 5
+    },
+    'Easy': {
+      'lines': 9,
+      'mines': 10
+    },
+    'Intermediate': {
+      'lines': 12,
+      'mines': 24
+    },
+    'Advanced': {
+      'lines': 16,
+      'mines': 60
+    },
   };
 
   var self = this;
@@ -231,19 +247,23 @@ function Game(level, board, flag, timer, smile, frown) {
       gameover = true;
       minefield.showMines();
       clearInterval(self.timer);
-	    alert('You Win');
+      alert('You Win');
     }
   }
 
   var onLeftClick = function onLeftClick(event) {
     if (!gameover) {
-      if(!self.timer){
+      if (!self.timer) {
         self.timer = setInterval(handleTimer, 1000);
       }
-      var cell =  event.srcElement;
+      var cell = event.srcElement
       var row = cell.row;
       var col = cell.col;
-      console.debug(event, row, col);
+      // console.debug(event, row, col);
+      
+      if (cell.className === 'flag') {
+        return;
+      }
 
       if (row !== undefined && col !== undefined) {
         if (minefield.isMine(row, col)) {
@@ -267,10 +287,10 @@ function Game(level, board, flag, timer, smile, frown) {
   var onRightClick = function onRightClick(event) {
     event.preventDefault();
     if (!gameover) {
-      var cell =  event.srcElement;
+      var cell = event.srcElement;
       var row = cell.row;
       var col = cell.col;
-      console.debug(event, row, col);
+      // console.debug(event, row, col);
 
       if (row !== undefined && col !== undefined) {
         minefield.changeState(row, col);
@@ -296,22 +316,23 @@ function Game(level, board, flag, timer, smile, frown) {
       8: 'eight',
       9: 'nine'
     }
-    var digits = element.getElementsByClassName('digits')[0].getElementsByTagName('div');
+    var digits = element.getElementsByClassName('digits')[0]
+                        .getElementsByTagName('div');
     digits[0].className = map[count[0]];
     digits[1].className = map[count[1]];
     digits[2].className = map[count[2]];
   }
 
   function displayCounter(element, count) {
-	  var strCount = count ? String(count) : '';
-	  strCount = strCount.length > 3 ? '999' : strCount;
-	  var prefix = '000'.substr(0, 3 - strCount.length);
-	  count = prefix + strCount;
+    var strCount = count ? String(count) : '';
+    strCount = strCount.length > 3 ? '999' : strCount;
+    var prefix = '000'.substr(0, 3 - strCount.length);
+    count = prefix + strCount;
     formatter(element, count)
   }
 
   function handleTimer() {
-    self.time ++;
+    self.time++;
     if (self.time > 999) {
       self.time = 999;
     }
@@ -331,7 +352,7 @@ function newGame() {
   clearInterval(game.timer);
 }
 
-document.onreadystatechange = function () {
+document.onreadystatechange = function() {
   if (document.readyState == "complete") {
     newGame();
   }
